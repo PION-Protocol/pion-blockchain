@@ -1,0 +1,10 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc-version = "0.8.20"
+optimizer = true
+
+remappings=[
+   "@openzeppelin=lib/openzeppelin-contracts"
+]

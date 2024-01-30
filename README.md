@@ -1,66 +1,27 @@
-## Foundry
+## Welcome to Pion protocol
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+**PION is a decentralized non-custodial infrastructure layer for the i-Gaming Industry where users can either fund the protocol to generate passive rewards.**
 
-Foundry consists of:
+## Protocol Documentation
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Pion gitbook: https://pion.gitbook.io/pion-protocol/
 
-## Documentation
+## Repo Overview
 
-https://book.getfoundry.sh/
+This repo will encompass all the blockchain related infrastructure for Pion protocol.
 
-## Usage
+## Installation
 
-### Build
+This project uses Foundry for smart contract development. Ensure you have [Foundry](https://book.getfoundry.sh/) installed.
 
-```shell
-$ forge build
+To set up the project:
+
+```
+git clone [https://github.com/PION-Protocol/pion-blockchain]
+cd pion-blockchain
 ```
 
-### Test
+## Testing
 
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+Run the tests with Foundry
+`forge test`

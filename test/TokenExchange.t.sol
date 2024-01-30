@@ -24,20 +24,16 @@ contract TokenExchangeTest is Test {
     uint256 usdtTokenDecimals;
 
     function setUp() public {
-        // Deploy mock ERC20 tokens
         pion = new MockERC20("PION-DUBAI", "PION", 18);
         usdt = new MockERC20("USDT", "USDT", 6);
 
-        // Mint some tokens for testing
         pion.mint(address(this), 10000 * EXCHANGE_RATE * 1e18);
 
         pionTokenDecimals = 10 ** pion.decimals();
         usdtTokenDecimals = 10 ** usdt.decimals();
 
-        // Deploy the TokenExchange contract
         tokenExchange = new TokenExchange(address(pion), address(usdt), treasuryWallet, developmentWallet, admin);
 
-        // Transfer PION tokens to TokenExchange contract
         pion.transfer(address(tokenExchange), pion.balanceOf(address(this)));
     }
 
@@ -125,6 +121,41 @@ contract TokenExchangeTest is Test {
         vm.prank(buyer);
         vm.expectRevert(Pausable.EnforcedPause.selector);
         tokenExchange.buyPion(usdtAmount);
+    }
+
+    function testSuccessfulTokenRetrieval() public {
+        uint256 remainingTokens = pion.balanceOf(address(tokenExchange));
+        address treasuryAddress = address(0x123);
+
+        tokenExchange.pause();
+
+        vm.prank(admin);
+        tokenExchange.retrieveRemainingTokens(treasuryAddress);
+
+        assertEq(pion.balanceOf(treasuryAddress), remainingTokens);
+        assertEq(pion.balanceOf(address(tokenExchange)), 0);
+    }
+
+    function testTokenRetrivalAccessControl() public {
+        address nonAdmin = address(0x123);
+
+        tokenExchange.pause();
+
+        vm.startPrank(nonAdmin);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector, nonAdmin, tokenExchange.DEFAULT_ADMIN_ROLE()
+            )
+        );
+        tokenExchange.retrieveRemainingTokens(nonAdmin);
+        vm.stopPrank();
+    }
+
+    function testTokenRetrivalWhenNotPaused() public {
+        address treasuryAddress = address(0x123);
+
+        vm.expectRevert(Pausable.ExpectedPause.selector);
+        tokenExchange.retrieveRemainingTokens(treasuryAddress);
     }
 
     //Invariant tests
@@ -235,9 +266,6 @@ contract TokenExchangeTest is Test {
                 (usdtAmount * TOKEN_SALE_PERCENT * usdtTokenDecimals) / (PERCENT * usdtTokenDecimals);
             uint256 developmentWalletAmount =
                 (usdtAmount * OP_EX_PERCENT * usdtTokenDecimals) / (PERCENT * usdtTokenDecimals);
-
-            console.log(treasuryWalletAmount);
-            console.log(developmentWalletAmount);
 
             assertEq(pion.balanceOf(address(buyer)), calculatePionAmount(usdtAmount));
             assertTrue(usdt.balanceOf(address(buyer)) < 100, "USDT balance of buyer should be less than 0.001");

@@ -24,4 +24,5 @@ cd pion-blockchain
 ## Testing
 
 Run the tests with Foundry
+
 `forge test`
